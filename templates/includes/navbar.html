@@ -1,0 +1,19 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{% url 'users:login' %}">StreamEvents</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-controls="nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="nav">
+      <ul class="navbar-nav ms-auto">
+        {% if request.user.is_authenticated %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'users:profile' %}">Perfil</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'users:logout' %}">Tancar sessió</a></li>
+        {% else %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'users:login' %}">Iniciar sessió</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'users:register' %}">Registrar-se</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>

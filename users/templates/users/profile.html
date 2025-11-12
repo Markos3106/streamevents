@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="card mb-3">
+    <div class="row g-0">
+      <div class="col-md-3 d-flex align-items-center justify-content-center p-3">
+        {% if user.avatar %}
+          <img src="{{ user.avatar.url }}" class="img-fluid rounded-circle" style="max-width:150px;">
+        {% else %}
+          <i class="fa-regular fa-user fa-6x text-muted"></i>
+        {% endif %}
+      </div>
+      <div class="col-md-9">
+        <div class="card-body">
+          <h4 class="card-title">{{ user.display_name|default:user.username }}</h4>
+          <p class="card-text">{{ user.bio|default:"Aquest usuari no ha afegit una bio." }}</p>
+          <p class="card-text"><small class="text-muted">{{ user.email }}</small></p>
+          <a href="{% url 'users:edit_profile' %}" class="btn btn-outline-primary">Editar perfil</a>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
