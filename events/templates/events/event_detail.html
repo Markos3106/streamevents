@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ event.title }} - StreamEvents{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card mb-4 shadow-sm">
+            {% if event.get_stream_embed_url %}
+                <div class="ratio ratio-16x9">
+                    <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ event.get_stream_embed_url }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                </div>
+            {% elif event.thumbnail %}
+                <img src="{{ event.thumbnail.url }}" class="card-img-top" alt="{{ event.title }}">
+            {% else %}
+                <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 400px;">
+                    <i class="fas fa-video fa-5x"></i>
+                </div>
+            {% endif %}
+            
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h1 class="card-title h3 mb-0">{{ event.title }}</h1>
+                    {% if event.is_live %}
+                        <span class="badge bg-danger animate-pulse">EN DIRECTE</span>
+                    {% else %}
+                        <span class="badge bg-secondary">{{ event.get_status_display }}</span>
+                    {% endif %}
+                </div>
+                
+                <div class="mb-3">
+                    <span class="badge bg-primary me-2">{{ event.get_category_display }}</span>
+                    {% for tag in event.get_tags_list %}
+                        <span class="badge bg-light text-dark border me-1">#{{ tag }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="d-flex align-items-center text-muted mb-4">
+                    <div class="me-4">
+                        <i class="far fa-calendar-alt me-2"></i>{{ event.scheduled_date|date:"l d M Y, H:i" }}
+                    </div>
+                    <div>
+                        <i class="fas fa-clock me-2"></i>{{ event.get_duration }} min (aprox)
+                    </div>
+                </div>
+
+                <h5 class="mb-3">Descripció</h5>
+                <p class="card-text">{{ event.description|linebreaks }}</p>
+
+                {% if event.stream_url %}
+                    <div class="mt-4 p-3 bg-light rounded">
+                        <i class="fas fa-link me-2"></i>Link Original: <a href="{{ event.stream_url }}" target="_blank">{{ event.stream_url }}</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        {% if user == event.creator %}
+            <div class="card mb-4 border-warning">
+                <div class="card-header bg-warning text-dark">
+                    <i class="fas fa-cog me-2"></i>Gestió
+                </div>
+                <div class="card-body d-grid gap-2">
+                    <a href="{% url 'events:event_update' event.pk %}" class="btn btn-outline-dark">
+                        <i class="fas fa-edit me-2"></i>Editar Esdeveniment
+                    </a>
+                    <a href="{% url 'events:event_delete' event.pk %}" class="btn btn-outline-danger">
+                        <i class="fas fa-trash-alt me-2"></i>Eliminar Esdeveniment
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-info-circle me-2"></i>Detalls
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Organitzador
+                    <span class="fw-bold">{{ event.creator.username }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Max. Espectadors
+                    <span class="badge bg-info rounded-pill">{{ event.max_viewers }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Creat el
+                    <span class="text-muted small">{{ event.created_at|date:"d/m/Y" }}</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+.animate-pulse {
+    animation: pulse 1.5s infinite;
+}
+</style>
+{% endblock %}

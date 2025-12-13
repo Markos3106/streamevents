@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} - StreamEvents{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h2 class="h4 mb-0">{{ title }}</h2>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data" novalidate>
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <label for="{{ form.title.id_for_label }}" class="form-label">{{ form.title.label }}</label>
+                        {{ form.title }}
+                        {% if form.title.errors %}
+                            <div class="text-danger small">{{ form.title.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.description.id_for_label }}" class="form-label">{{ form.description.label }}</label>
+                        {{ form.description }}
+                        {% if form.description.errors %}
+                            <div class="text-danger small">{{ form.description.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.category.id_for_label }}" class="form-label">{{ form.category.label }}</label>
+                            {{ form.category }}
+                            {% if form.category.errors %}
+                                <div class="text-danger small">{{ form.category.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.scheduled_date.id_for_label }}" class="form-label">{{ form.scheduled_date.label }}</label>
+                            {{ form.scheduled_date }}
+                            {% if form.scheduled_date.errors %}
+                                <div class="text-danger small">{{ form.scheduled_date.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.max_viewers.id_for_label }}" class="form-label">{{ form.max_viewers.label }}</label>
+                            {{ form.max_viewers }}
+                            {% if form.max_viewers.errors %}
+                                <div class="text-danger small">{{ form.max_viewers.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        {% if form.status %}
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.status.id_for_label }}" class="form-label">{{ form.status.label }}</label>
+                            {{ form.status }}
+                            {% if form.status.errors %}
+                                <div class="text-danger small">{{ form.status.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.stream_url.id_for_label }}" class="form-label">{{ form.stream_url.label }}</label>
+                        {{ form.stream_url }}
+                        <div class="form-text">URLs suportades: YouTube (video/stream), Twitch (canal). Es mostrarà al reproductor.</div>
+                        {% if form.stream_url.errors %}
+                            <div class="text-danger small">{{ form.stream_url.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.thumbnail.id_for_label }}" class="form-label">{{ form.thumbnail.label }}</label>
+                        {{ form.thumbnail }}
+                        {% if form.instance.thumbnail %}
+                            <div class="mt-2">
+                                <img src="{{ form.instance.thumbnail.url }}" alt="Thumbnail actual" style="height: 100px;">
+                                <small class="text-muted d-block">Imatge actual</small>
+                            </div>
+                        {% endif %}
+                        {% if form.thumbnail.errors %}
+                            <div class="text-danger small">{{ form.thumbnail.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.tags.id_for_label }}" class="form-label">{{ form.tags.label }}</label>
+                        {{ form.tags }}
+                        <div class="form-text">Separa les etiquetes amb comes (ex: gaming, lol, final).</div>
+                        {% if form.tags.errors %}
+                            <div class="text-danger small">{{ form.tags.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <a href="{% url 'events:event_list' %}" class="btn btn-secondary">Cancel·lar</a>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i> Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

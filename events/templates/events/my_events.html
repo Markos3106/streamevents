@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Els meus Esdeveniments - StreamEvents{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-user-circle me-2"></i>Els meus Esdeveniments</h1>
+    <a href="{% url 'events:event_create' %}" class="btn btn-success"><i class="fas fa-plus me-1"></i> Nou Esdeveniment</a>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="btn-group" role="group">
+            <a href="{% url 'events:my_events' %}" class="btn btn-outline-primary {% if not current_status %}active{% endif %}">Tots</a>
+            <a href="{% url 'events:my_events' %}?status=scheduled" class="btn btn-outline-primary {% if current_status == 'scheduled' %}active{% endif %}">Programats</a>
+            <a href="{% url 'events:my_events' %}?status=live" class="btn btn-outline-primary {% if current_status == 'live' %}active{% endif %}">En Directe</a>
+            <a href="{% url 'events:my_events' %}?status=finished" class="btn btn-outline-primary {% if current_status == 'finished' %}active{% endif %}">Finalitzats</a>
+        </div>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-hover align-middle shadow-sm bg-white rounded">
+        <thead class="table-light">
+            <tr>
+                <th>Títol</th>
+                <th>Estat</th>
+                <th>Data</th>
+                <th>Espectadors</th>
+                <th>Accions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in events %}
+            <tr>
+                <td>
+                    <div class="d-flex align-items-center">
+                        {% if event.thumbnail %}
+                            <img src="{{ event.thumbnail.url }}" class="rounded me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                        {% else %}
+                            <div class="bg-secondary text-white rounded me-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                <i class="fas fa-video"></i>
+                            </div>
+                        {% endif %}
+                        <a href="{{ event.get_absolute_url }}" class="text-decoration-none fw-bold text-dark">{{ event.title }}</a>
+                    </div>
+                </td>
+                <td>
+                    {% if event.status == 'live' %}
+                        <span class="badge bg-danger">LIVE</span>
+                    {% elif event.status == 'scheduled' %}
+                        <span class="badge bg-info text-dark">Programat</span>
+                    {% else %}
+                        <span class="badge bg-secondary">{{ event.get_status_display }}</span>
+                    {% endif %}
+                </td>
+                <td>{{ event.scheduled_date|date:"d/m/Y H:i" }}</td>
+                <td>{{ event.max_viewers }}</td>
+                <td>
+                    <div class="btn-group btn-group-sm">
+                        <a href="{{ event.get_absolute_url }}" class="btn btn-outline-secondary" title="Veure"><i class="fas fa-eye"></i></a>
+                        <a href="{% url 'events:event_update' event.pk %}" class="btn btn-outline-primary" title="Editar"><i class="fas fa-edit"></i></a>
+                        <a href="{% url 'events:event_delete' event.pk %}" class="btn btn-outline-danger" title="Eliminar"><i class="fas fa-trash-alt"></i></a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-center py-4">No has creat cap esdeveniment encara.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
