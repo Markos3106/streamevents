@@ -7,6 +7,7 @@ from .forms import EventCreationForm, EventUpdateForm, EventSearchForm
 from django.db.models import Q
 from django.utils import timezone
 from datetime import datetime, time
+from chat.forms import ChatMessageForm
 
 def event_list_view(request):
     search_form = EventSearchForm(request.GET)
@@ -50,8 +51,10 @@ def event_list_view(request):
 
 def event_detail_view(request, pk):
     event = get_object_or_404(Event, pk=pk)
+    chat_form = ChatMessageForm()
     context = {
         'event': event,
+        'chat_form': chat_form,
     }
     return render(request, 'events/event_detail.html', context)
 
