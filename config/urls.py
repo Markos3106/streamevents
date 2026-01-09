@@ -17,12 +17,14 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path, include
 from django.contrib import admin
+from django.views.generic import RedirectView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("users/", include(("users.urls", "users"), namespace="users")),
     path("events/", include("events.urls")),
     path("chat/", include("chat.urls")),
+    path("", RedirectView.as_view(pattern_name="events:event_list", permanent=False), name="home"),
 ]
 
 if settings.DEBUG:

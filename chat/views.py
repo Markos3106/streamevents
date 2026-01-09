@@ -66,13 +66,15 @@ def chat_load_messages(request, event_pk):
     # Filtrar missatges: event, is_deleted=False
     # NO utilitzar select_related() amb MongoDB
     messages_qs = ChatMessage.objects.filter(
-        event=event,
-        is_deleted=False
-    ).order_by('created_at')[:50]
+        event=event
+    ).order_by('created_at')
     
     # Crear llista de diccionaris
     messages_list = []
     for msg in messages_qs:
+        if msg.is_deleted:
+            continue
+            
         messages_list.append({
             'id': msg.id,
             'user': msg.user.username,
@@ -82,6 +84,9 @@ def chat_load_messages(request, event_pk):
             'can_delete': msg.can_delete(request.user) if request.user.is_authenticated else False,
             'is_highlighted': msg.is_highlighted,
         })
+        
+        if len(messages_list) >= 50:
+            break
     
     return JsonResponse({'messages': messages_list})
 

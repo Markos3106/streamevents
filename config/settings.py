@@ -138,9 +138,9 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
-LOGIN_URL = 'login'
+LOGIN_URL = 'users:login'
 LOGIN_REDIRECT_URL = 'home'
-LOGOUT_REDIRECT_URL = 'login'
+LOGOUT_REDIRECT_URL = 'users:login'
 
 from django.contrib.messages import constants as messages
 MESSAGE_TAGS = {
