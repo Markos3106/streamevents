@@ -1,0 +1,367 @@
+{% extends "base.html" %}
+
+{% block title %}Cerca Semàntica - StreamEvents{% endblock %}
+
+{% block extra_head %}
+<style>
+  /* Estils per a la pàgina de cerca semàntica */
+  .search-container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  
+  .search-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .search-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+  }
+  
+  .search-header p {
+    color: #6b7280;
+    font-size: 1.1rem;
+  }
+  
+  .search-form {
+    background: #f8fafc;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+  
+  .search-input-wrapper {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  
+  .search-input-wrapper input[type="text"] {
+    flex: 1;
+    min-width: 250px;
+    padding: 0.875rem 1.25rem;
+    font-size: 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+  }
+  
+  .search-input-wrapper input[type="text"]:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  }
+  
+  .search-options {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .search-options label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    color: #4b5563;
+    font-size: 0.9rem;
+  }
+  
+  .search-options input[type="checkbox"] {
+    width: 1.1rem;
+    height: 1.1rem;
+    accent-color: #6366f1;
+  }
+  
+  .btn-search {
+    padding: 0.875rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .btn-search:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px -8px rgba(99, 102, 241, 0.5);
+  }
+  
+  .search-stats {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: #6b7280;
+  }
+  
+  .search-stats span {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  
+  .results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #e5e7eb;
+  }
+  
+  .results-header h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0;
+  }
+  
+  .results-count {
+    background: #f3f4f6;
+    padding: 0.35rem 0.85rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    color: #6b7280;
+  }
+  
+  .result-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border-left: 4px solid transparent;
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  
+  .result-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateX(4px);
+  }
+  
+  .result-card.high-score { border-left-color: #10b981; }
+  .result-card.medium-score { border-left-color: #f59e0b; }
+  .result-card.low-score { border-left-color: #6b7280; }
+  
+  .result-info {
+    flex: 1;
+  }
+  
+  .result-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+  }
+  
+  .result-title a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  
+  .result-title a:hover {
+    color: #6366f1;
+  }
+  
+  .result-meta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+    color: #6b7280;
+  }
+  
+  .result-meta span {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+  
+  .result-score {
+    text-align: right;
+    min-width: 70px;
+  }
+  
+  .score-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #10b981;
+  }
+  
+  .score-label {
+    font-size: 0.7rem;
+    color: #9ca3af;
+    text-transform: uppercase;
+  }
+  
+  .category-badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    background: #e0e7ff;
+    color: #4f46e5;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+  
+  .no-results {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #6b7280;
+  }
+  
+  .no-results i {
+    font-size: 3rem;
+    color: #d1d5db;
+    margin-bottom: 1rem;
+  }
+  
+  .no-results p {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .examples {
+    background: #f0fdf4;
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-top: 2rem;
+  }
+  
+  .examples h4 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #166534;
+    margin-bottom: 0.75rem;
+  }
+  
+  .examples ul {
+    margin: 0;
+    padding-left: 1.25rem;
+  }
+  
+  .examples li {
+    color: #15803d;
+    font-size: 0.9rem;
+    margin-bottom: 0.35rem;
+  }
+  
+  .examples code {
+    background: rgba(21, 128, 61, 0.1);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="search-container">
+  <div class="search-header">
+    <h1><i class="fas fa-brain"></i> Cerca Semàntica</h1>
+    <p>Troba esdeveniments amb llenguatge natural</p>
+  </div>
+
+  <form method="get" class="search-form">
+    <div class="search-input-wrapper">
+      <input 
+        type="text" 
+        name="q" 
+        value="{{ query }}" 
+        placeholder="Ex: concert de jazz aquest cap de setmana, torneig de videojocs..."
+        autofocus
+      >
+      <button type="submit" class="btn-search">
+        <i class="fas fa-search"></i> Cercar
+      </button>
+    </div>
+    
+    <div class="search-options">
+      <label>
+        <input type="checkbox" name="future" value="1" {% if only_future %}checked{% endif %}>
+        Només esdeveniments futurs
+      </label>
+    </div>
+    
+    <div class="search-stats">
+      <span><i class="fas fa-database"></i> {{ total_events }} events</span>
+      <span><i class="fas fa-vector-square"></i> {{ events_with_embeddings }} amb embedding</span>
+      {% if search_time %}
+      <span><i class="fas fa-clock"></i> {{ search_time }}ms</span>
+      {% endif %}
+    </div>
+  </form>
+
+  {% if query %}
+    <div class="results-header">
+      <h3><i class="fas fa-list-ul"></i> Resultats</h3>
+      <span class="results-count">{{ results|length }} trobats</span>
+    </div>
+
+    {% if results %}
+      {% for event, score in results %}
+        <div class="result-card {% if score >= 0.5 %}high-score{% elif score >= 0.3 %}medium-score{% else %}low-score{% endif %}">
+          <div class="result-info">
+            <div class="result-title">
+              <a href="{{ event.get_absolute_url }}">{{ event.title }}</a>
+            </div>
+            <div class="result-meta">
+              <span class="category-badge">{{ event.get_category_display }}</span>
+              <span><i class="fas fa-calendar"></i> {{ event.scheduled_date|date:"d/m/Y H:i" }}</span>
+              <span><i class="fas fa-{{ event.status|default:'clock' }}"></i> {{ event.get_status_display }}</span>
+            </div>
+          </div>
+          <div class="result-score">
+            <div class="score-value">{{ score|floatformat:2 }}</div>
+            <div class="score-label">similitud</div>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="no-results">
+        <i class="fas fa-search-minus"></i>
+        <p>Cap resultat per a "{{ query }}"</p>
+        <small>Prova amb altres termes o desactiva el filtre d'esdeveniments futurs</small>
+      </div>
+    {% endif %}
+    
+    <div style="margin-top: 1.5rem; padding: 1rem; background: #f8fafc; border-radius: 8px; font-size: 0.8rem; color: #6b7280;">
+      <strong>Model:</strong> {{ embedding_model }}
+    </div>
+    
+  {% else %}
+    <div class="examples">
+      <h4><i class="fas fa-lightbulb"></i> Exemples de cerques:</h4>
+      <ul>
+        <li><code>concert de música acústica</code></li>
+        <li><code>torneig de videojocs competitiu</code></li>
+        <li><code>xerrades sobre tecnologia i innovació</code></li>
+        <li><code>streaming de gaming retro</code></li>
+        <li><code>entreteniment i cinema</code></li>
+      </ul>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

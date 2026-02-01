@@ -40,6 +40,13 @@ class Event(models.Model):
     tags = models.CharField(max_length=500, blank=True, verbose_name="Etiquetes separades per comes")
     stream_url = models.URLField(max_length=500, blank=True, null=True, verbose_name="URL del streaming/demo")
 
+    # Camps per a cerca semàntica (embeddings)
+    # Nota: Usem TextField en lloc de JSONField per compatibilitat amb djongo
+    # El vector s'emmagatzema com a JSON string serialitzat
+    embedding = models.TextField(blank=True, null=True, verbose_name="Vector d'embedding (JSON)")
+    embedding_model = models.CharField(max_length=200, blank=True, null=True, verbose_name="Model d'embedding")
+    embedding_updated_at = models.DateTimeField(blank=True, null=True, verbose_name="Última actualització embedding")
+
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
 

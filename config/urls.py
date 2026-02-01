@@ -24,6 +24,7 @@ urlpatterns = [
     path("users/", include(("users.urls", "users"), namespace="users")),
     path("events/", include("events.urls")),
     path("chat/", include("chat.urls")),
+    path("", include("semantic_search.urls")),  # Cerca semàntica
     path("", RedirectView.as_view(pattern_name="events:event_list", permanent=False), name="home"),
 ]
 
