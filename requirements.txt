@@ -5,6 +5,7 @@ pymongo==3.12.3
 python-dotenv==1.0.0
 
 # Semantic Search - Embeddings
-sentence-transformers==2.2.2
+sentence-transformers>=2.2.2
 torch>=2.0.0
 numpy>=1.23
+requests>=2.28.0
